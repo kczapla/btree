@@ -22,13 +22,13 @@ func splitNode(parent *Node, childIndex int) {
 	middleKeyIndex := newN
 
 	// move keys
-	for i := 0; i < newN; i++ {
+	for i := range newN {
 		newChild.keys[i] = childX.keys[middleKeyIndex+i+1]
 		childX.keys[middleKeyIndex+i+1] = 0
 	}
 
 	// move pointers
-	for i := 0; i < newN; i++ {
+	for i := range newN {
 		newChild.children[i] = childX.children[middleKeyIndex+i]
 		childX.children[middleKeyIndex+i] = nil
 	}
