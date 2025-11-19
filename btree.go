@@ -58,3 +58,40 @@ func splitNode(parent *Node, childIndex int) {
 	parent.children[keyInParentIndex+1] = newChild
 	parent.n += 1
 }
+
+func Insert(node *Node, key int) {
+	if node.leaf {
+		// find first greater key
+		greaterKeyIndex := node.n
+		for i := 0; i < node.n; i++ {
+			if key < node.keys[i] {
+				greaterKeyIndex = i
+				break
+			}
+		}
+
+		// shift keys by 1 to right
+		for i := node.n - 1; greaterKeyIndex <= i; i-- {
+			node.keys[i+1] = node.keys[i]
+		}
+		node.keys[greaterKeyIndex] = key
+	} else {
+		// find first greater key
+		greaterKeyIndex := node.n
+		for i := 0; i < node.n; i++ {
+			if key < node.keys[i] {
+				greaterKeyIndex = i
+				break
+			}
+		}
+
+		if node.children[greaterKeyIndex].n == len(node.keys) {
+			splitNode(node, greaterKeyIndex)
+			if node.keys[greaterKeyIndex] < key {
+				Insert(node.children[greaterKeyIndex+1], key)
+			} else {
+				Insert(node.children[greaterKeyIndex], key)
+			}
+		}
+	}
+}
