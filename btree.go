@@ -12,6 +12,14 @@ type Node struct {
 	n        int
 }
 
+func (tree *Tree) maxKeysInTree() int {
+	return tree.maxChildrenInTree() - 1
+}
+
+func (tree *Tree) maxChildrenInTree() int {
+	return 2 * tree.t
+}
+
 func (tree *Tree) newNode(isLeaf bool) *Node {
 	return &Node{
 		keys:     make([]int, 2*tree.t-1),
@@ -69,7 +77,7 @@ func (t *Tree) splitNode(parent *Node, childIndex int) {
 }
 
 func (t *Tree) Insert(key int) {
-	if t.root.n == len(t.root.keys) {
+	if t.root.n == t.maxKeysInTree() {
 		size := len(t.root.children)
 		newRoot := &Node{
 			n:        0,
