@@ -10,11 +10,13 @@ func TestSplitNode(t *testing.T) {
 	testCases := []struct {
 		name         string
 		keysToInsert []int
+		t            int
 		expectedTree *Tree
 	}{
 		{
 			name:         "insert into full child at last place",
 			keysToInsert: []int{1, 2, 4, 13, 14, 5, 6, 12, 7, 8, 9, 10},
+			t:            3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -54,6 +56,7 @@ func TestSplitNode(t *testing.T) {
 		{
 			name:         "insert into full root",
 			keysToInsert: []int{1, 2, 3, 4, 5, 6},
+			t:            3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -81,7 +84,7 @@ func TestSplitNode(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			currentTree := NewTree(3)
+			currentTree := NewTree(testCase.t)
 			for _, keyToInsert := range testCase.keysToInsert {
 				currentTree.Insert(keyToInsert)
 			}
