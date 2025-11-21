@@ -1,5 +1,9 @@
 package btree
 
+type Tree struct {
+	root *Node
+}
+
 type Node struct {
 	keys     []int
 	children []*Node
@@ -7,7 +11,7 @@ type Node struct {
 	n        int
 }
 
-func splitNode(parent *Node, childIndex int) {
+func (t *Tree) splitNode(parent *Node, childIndex int) {
 	childX := parent.children[childIndex]
 	newN := childX.n / 2
 
@@ -15,9 +19,8 @@ func splitNode(parent *Node, childIndex int) {
 		keys:     make([]int, childX.n),
 		children: make([]*Node, childX.n+1),
 		n:        newN,
+		leaf:     childX.leaf,
 	}
-
-	newChild.leaf = parent.children[childIndex].leaf
 
 	middleKeyIndex := newN
 
@@ -34,7 +37,7 @@ func splitNode(parent *Node, childIndex int) {
 	}
 	childX.n = newN
 
-	keyInParentIndex := -1
+	keyInParentIndex := parent.n
 	for i, key := range parent.keys {
 		if childX.keys[middleKeyIndex] < key {
 			keyInParentIndex = i
@@ -59,7 +62,26 @@ func splitNode(parent *Node, childIndex int) {
 	parent.n += 1
 }
 
-func Insert(node *Node, key int) {
+func (t *Tree) Insert(key int) {
+	if t.root.n == len(t.root.keys) {
+		size := len(t.root.children)
+		newRoot := &Node{
+			n:        0,
+			leaf:     false,
+			keys:     make([]int, size-1),
+			children: make([]*Node, size),
+		}
+		newRoot.children[0] = t.root
+		t.root = newRoot
+
+		t.splitNode(t.root, 0)
+		t.insertToNonNonEmptyNode(t.root, key)
+	} else {
+		t.insertToNonNonEmptyNode(t.root, key)
+	}
+}
+
+func (t *Tree) insertToNonNonEmptyNode(node *Node, key int) {
 	if node.leaf {
 		// find first greater key
 		greaterKeyIndex := node.n
@@ -86,12 +108,14 @@ func Insert(node *Node, key int) {
 		}
 
 		if node.children[greaterKeyIndex].n == len(node.keys) {
-			splitNode(node, greaterKeyIndex)
+			t.splitNode(node, greaterKeyIndex)
 			if node.keys[greaterKeyIndex] < key {
-				Insert(node.children[greaterKeyIndex+1], key)
+				t.insertToNonNonEmptyNode(node.children[greaterKeyIndex+1], key)
 			} else {
-				Insert(node.children[greaterKeyIndex], key)
+				t.insertToNonNonEmptyNode(node.children[greaterKeyIndex], key)
 			}
+		} else {
+			t.insertToNonNonEmptyNode(node.children[greaterKeyIndex], key)
 		}
 	}
 }
