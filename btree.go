@@ -2,6 +2,7 @@ package btree
 
 type Tree struct {
 	root *Node
+	t    int
 }
 
 type Node struct {
@@ -11,16 +12,20 @@ type Node struct {
 	n        int
 }
 
+func (tree *Tree) newNode(isLeaf bool) *Node {
+	return &Node{
+		keys:     make([]int, 2*tree.t-1),
+		children: make([]*Node, 2*tree.t),
+		n:        0,
+		leaf:     isLeaf,
+	}
+}
+
 func (t *Tree) splitNode(parent *Node, childIndex int) {
 	childX := parent.children[childIndex]
-	newN := childX.n / 2
+	newN := t.t - 1
 
-	newChild := &Node{
-		keys:     make([]int, childX.n),
-		children: make([]*Node, childX.n+1),
-		n:        newN,
-		leaf:     childX.leaf,
-	}
+	newChild := t.newNode(childX.leaf)
 
 	middleKeyIndex := newN
 
@@ -28,6 +33,7 @@ func (t *Tree) splitNode(parent *Node, childIndex int) {
 	for i := range newN {
 		newChild.keys[i] = childX.keys[middleKeyIndex+i+1]
 		childX.keys[middleKeyIndex+i+1] = 0
+		newChild.n += 1
 	}
 
 	// move pointers

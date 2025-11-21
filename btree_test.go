@@ -17,6 +17,7 @@ func TestSplitNode(t *testing.T) {
 			name:        "insert into full child at last place",
 			keyToInsert: 10,
 			currentTree: &Tree{
+				t: 3,
 				root: &Node{
 					keys: []int{4, 12, 0, 0, 0},
 					n:    2,
@@ -44,6 +45,7 @@ func TestSplitNode(t *testing.T) {
 				},
 			},
 			expectedTree: &Tree{
+				t: 3,
 				root: &Node{
 					keys: []int{4, 7, 12, 0, 0},
 					n:    3,
@@ -82,6 +84,7 @@ func TestSplitNode(t *testing.T) {
 			name:        "insert into full root",
 			keyToInsert: 6,
 			currentTree: &Tree{
+				t: 3,
 				root: &Node{
 					keys: []int{1, 2, 3, 4, 5},
 					leaf: true,
@@ -92,6 +95,7 @@ func TestSplitNode(t *testing.T) {
 				},
 			},
 			expectedTree: &Tree{
+				t: 3,
 				root: &Node{
 					keys: []int{3, 0, 0, 0, 0},
 					n:    1,
