@@ -78,13 +78,8 @@ func (t *Tree) splitNode(parent *Node, childIndex int) {
 
 func (t *Tree) Insert(key int) {
 	if t.root.n == t.maxKeysInTree() {
-		size := len(t.root.children)
-		newRoot := &Node{
-			n:        0,
-			leaf:     false,
-			keys:     make([]int, size-1),
-			children: make([]*Node, size),
-		}
+		newRoot := t.newNode(false)
+
 		newRoot.children[0] = t.root
 		t.root = newRoot
 
