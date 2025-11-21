@@ -113,6 +113,7 @@ func (t *Tree) insertToNonNonEmptyNode(node *Node, key int) {
 			node.keys[i+1] = node.keys[i]
 		}
 		node.keys[greaterKeyIndex] = key
+		node.n += 1
 	} else {
 		// find first greater key
 		greaterKeyIndex := node.n

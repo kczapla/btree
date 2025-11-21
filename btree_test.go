@@ -9,41 +9,12 @@ import (
 func TestSplitNode(t *testing.T) {
 	testCases := []struct {
 		name         string
-		keyToInsert  int
-		currentTree  *Tree
+		keysToInsert []int
 		expectedTree *Tree
 	}{
 		{
-			name:        "insert into full child at last place",
-			keyToInsert: 10,
-			currentTree: &Tree{
-				t: 3,
-				root: &Node{
-					keys: []int{4, 12, 0, 0, 0},
-					n:    2,
-					children: []*Node{
-						{
-							keys:     []int{1, 2, 0, 0, 0},
-							children: []*Node{nil, nil, nil, nil, nil, nil},
-							leaf:     true,
-							n:        2,
-						},
-						{
-							keys:     []int{5, 6, 7, 8, 9},
-							children: []*Node{nil, nil, nil, nil, nil, nil},
-							leaf:     true,
-							n:        5,
-						},
-						{
-							keys:     []int{13, 14, 0, 0, 0},
-							children: []*Node{nil, nil, nil, nil, nil, nil},
-							leaf:     true,
-							n:        2,
-						},
-						nil, nil, nil,
-					},
-				},
-			},
+			name:         "insert into full child at last place",
+			keysToInsert: []int{1, 2, 4, 13, 14, 5, 6, 12, 7, 8, 9, 10},
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -66,7 +37,7 @@ func TestSplitNode(t *testing.T) {
 							keys:     []int{8, 9, 10, 0, 0},
 							leaf:     true,
 							children: []*Node{nil, nil, nil, nil, nil, nil},
-							n:        2,
+							n:        3,
 						},
 						{
 							keys:     []int{13, 14, 0, 0, 0},
@@ -81,19 +52,8 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:        "insert into full root",
-			keyToInsert: 6,
-			currentTree: &Tree{
-				t: 3,
-				root: &Node{
-					keys: []int{1, 2, 3, 4, 5},
-					leaf: true,
-					n:    5,
-					children: []*Node{
-						nil, nil, nil, nil, nil, nil,
-					},
-				},
-			},
+			name:         "insert into full root",
+			keysToInsert: []int{1, 2, 3, 4, 5, 6},
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -110,7 +70,7 @@ func TestSplitNode(t *testing.T) {
 							keys:     []int{4, 5, 6, 0, 0},
 							leaf:     true,
 							children: []*Node{nil, nil, nil, nil, nil, nil},
-							n:        2,
+							n:        3,
 						},
 						nil, nil, nil, nil,
 					},
@@ -121,8 +81,11 @@ func TestSplitNode(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			testCase.currentTree.Insert(testCase.keyToInsert)
-			assert.Equal(t, testCase.expectedTree, testCase.currentTree)
+			currentTree := NewTree(3)
+			for _, keyToInsert := range testCase.keysToInsert {
+				currentTree.Insert(keyToInsert)
+			}
+			assert.Equal(t, testCase.expectedTree, currentTree)
 		})
 	}
 
