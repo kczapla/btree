@@ -116,7 +116,7 @@ func (t *Tree) insertToNonNonEmptyNode(node *Node, key int) {
 			}
 		}
 
-		if node.children[greaterKeyIndex].n == len(node.keys) {
+		if node.children[greaterKeyIndex].n == t.maxKeysInTree() {
 			t.splitNode(node, greaterKeyIndex)
 			if node.keys[greaterKeyIndex] < key {
 				t.insertToNonNonEmptyNode(node.children[greaterKeyIndex+1], key)
