@@ -228,6 +228,47 @@ func (t *Tree) deleteFromNode(node *Node, key int) {
 					node.n -= 1
 
 					t.deleteFromNode(childX, key)
+				} else {
+					childZ := node.children[keyIndex+1]
+					// schift keys
+					for i := 0; i < childZ.n; i++ {
+						childZ.keys[t.t+i] = childZ.keys[i]
+					}
+					// schift children
+					for i := 0; i < childZ.n+1; i++ {
+						childZ.children[t.t-1+i] = childZ.children[i]
+					}
+
+					// move keys from childY to childZ
+					for i := 0; i < childZ.n; i++ {
+						childZ.keys[i] = childY.keys[i]
+					}
+
+					// move children from childY to childZ
+					for i := 0; i < childY.n+1; i++ {
+						childZ.keys[i] = childY.keys[i]
+					}
+
+					childZ.keys[t.t-1] = node.keys[keyIndex]
+					childZ.n = 2*t.t - 1
+
+					// shift keys in node
+					for i := keyIndex; i < node.n-1; i++ {
+						node.keys[i] = node.keys[i+1]
+					}
+					node.keys[node.n-1] = 0
+
+					// shift children in node
+					for i := keyIndex; i < node.n; i++ {
+						node.children[i] = node.children[i+1]
+					}
+
+					node.children[node.n] = nil
+
+					node.n -= 1
+
+					t.deleteFromNode(childZ, key)
+
 				}
 			}
 		}
