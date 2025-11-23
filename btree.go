@@ -139,6 +139,13 @@ func (t *Tree) insertToNonNonEmptyNode(node *Node, key int) {
 
 func (t *Tree) Delete(key int) {
 	t.deleteFromNode(t.root, key)
+	if t.root.n != 0 {
+		return
+	}
+
+	// there is an edge case when last key is delted from root as this is the only node that can have size 1
+	// this addresses that case
+	t.root = t.root.children[0]
 }
 
 func (t *Tree) deleteFromNode(node *Node, key int) {
@@ -190,8 +197,39 @@ func (t *Tree) deleteFromNode(node *Node, key int) {
 				childY.n += 1
 
 				t.deleteFromNode(childY, key)
+			} else {
+				if 0 < keyIndex {
+					childX := node.children[keyIndex-1]
+					childX.keys[childX.n] = node.keys[keyIndex-1]
+					childX.n += 1
+
+					for i := 0; i < childY.n; i++ {
+						childX.keys[childX.n+i] = childY.keys[i]
+					}
+					childX.n += childY.n
+
+					// move children. Use fact that t.t - 1 is index of middle elem and t.t is child right to that middle elem.
+					// the ones that I want to populate
+					for i := 0; i < childY.n+1; i++ {
+						childX.children[t.t+i] = childY.children[i]
+					}
+
+					// shift keys in node to the left by 1
+					for i := keyIndex + 1; i < node.n; i++ {
+						node.keys[i-1] = node.keys[i]
+					}
+					node.keys[node.n-1] = 0
+
+					// shift children in node to the left by 1
+					for i := keyIndex + 1; i < node.n+1; i++ {
+						node.children[i-1] = node.children[i]
+					}
+					node.children[node.n] = nil
+					node.n -= 1
+
+					t.deleteFromNode(childX, key)
+				}
 			}
-			// what in case when childY doesn't have right sibling and its left sibling doesn't have enogh keys? In this case merge
 		}
 	}
 }

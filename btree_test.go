@@ -169,6 +169,21 @@ func TestSplitNode(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:         "delete from leaf node and leafs with t - 1 keys",
+			keysToInsert: []int{1, 2, 3, 4, 5, 6},
+			keysToDelete: []int{2, 5},
+			t:            3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					keys:     []int{1, 3, 4, 6, 0},
+					n:        4,
+					leaf:     true,
+					children: []*Node{nil, nil, nil, nil, nil, nil},
+				},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
