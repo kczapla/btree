@@ -138,22 +138,66 @@ func (t *Tree) insertToNonNonEmptyNode(node *Node, key int) {
 }
 
 func (t *Tree) Delete(key int) {
-	keyIndex := -1
-	for i, k := range t.root.keys {
-		if key == k {
-			keyIndex = i
-			break
+	t.deleteFromNode(t.root, key)
+}
+
+func (t *Tree) deleteFromNode(node *Node, key int) {
+	if node.leaf {
+		ok, keyIndex := findKeyInNode2(node, key)
+
+		if !ok {
+			return
+		}
+
+		for i := keyIndex + 1; i < node.n; i++ {
+			node.keys[i-1] = node.keys[i]
+		}
+		node.keys[node.n-1] = 0
+
+		node.n -= 1
+	} else {
+		keyIndex := findKeyInNode(node, key)
+		childY := node.children[keyIndex]
+		if childY.n < t.t {
+			if 0 < keyIndex && t.t <= node.children[keyIndex-1].n {
+				childX := node.children[keyIndex-1]
+
+				indexOfLastKeyInChildX := childX.n - 1
+				valueOfLastKeyInChildX := childX.keys[indexOfLastKeyInChildX]
+
+				t.deleteFromNode(childX, valueOfLastKeyInChildX)
+
+				// shift to right by one in childY
+				for i := childY.n; 0 < i; i-- {
+					childY.keys[i] = childY.keys[i-1]
+				}
+
+				childY.keys[0] = node.keys[keyIndex-1]
+				node.keys[keyIndex-1] = valueOfLastKeyInChildX
+				childY.n += 1
+
+				t.deleteFromNode(childY, key)
+			}
 		}
 	}
+}
 
-	if keyIndex == -1 {
-		return
+func findKeyInNode(node *Node, key int) int {
+	for i, k := range node.keys {
+		if key < k {
+			return i
+		}
 	}
+	return node.n
+}
 
-	for i := keyIndex + 1; i < t.root.n; i++ {
-		t.root.keys[i-1] = t.root.keys[i]
+func findKeyInNode2(node *Node, key int) (bool, int) {
+	for i, k := range node.keys {
+		if key == k {
+			return true, i
+		} else if key < k {
+			return false, i
+		}
 	}
-	t.root.keys[t.root.n-1] = 0
-
-	t.root.n -= 1
+	return false, node.n
 }
