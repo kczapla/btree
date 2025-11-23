@@ -136,3 +136,24 @@ func (t *Tree) insertToNonNonEmptyNode(node *Node, key int) {
 		}
 	}
 }
+
+func (t *Tree) Delete(key int) {
+	keyIndex := -1
+	for i, k := range t.root.keys {
+		if key == k {
+			keyIndex = i
+			break
+		}
+	}
+
+	if keyIndex == -1 {
+		return
+	}
+
+	for i := keyIndex + 1; i < t.root.n; i++ {
+		t.root.keys[i-1] = t.root.keys[i]
+	}
+	t.root.keys[t.root.n-1] = 0
+
+	t.root.n -= 1
+}

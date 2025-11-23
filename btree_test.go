@@ -10,12 +10,14 @@ func TestSplitNode(t *testing.T) {
 	testCases := []struct {
 		name         string
 		keysToInsert []int
+		keysToDelete []int
 		t            int
 		expectedTree *Tree
 	}{
 		{
 			name:         "insert into full child at last place",
 			keysToInsert: []int{1, 2, 4, 13, 14, 5, 6, 12, 7, 8, 9, 10},
+			keysToDelete: []int{},
 			t:            3,
 			expectedTree: &Tree{
 				t: 3,
@@ -56,6 +58,7 @@ func TestSplitNode(t *testing.T) {
 		{
 			name:         "insert into full root",
 			keysToInsert: []int{1, 2, 3, 4, 5, 6},
+			keysToDelete: []int{},
 			t:            3,
 			expectedTree: &Tree{
 				t: 3,
@@ -80,6 +83,21 @@ func TestSplitNode(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:         "delete from full root",
+			keysToInsert: []int{1, 2, 3, 4, 5},
+			keysToDelete: []int{3},
+			t:            3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					keys:     []int{1, 2, 4, 5, 0},
+					n:        4,
+					children: []*Node{nil, nil, nil, nil, nil, nil},
+					leaf:     true,
+				},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -87,6 +105,9 @@ func TestSplitNode(t *testing.T) {
 			currentTree := NewTree(testCase.t)
 			for _, keyToInsert := range testCase.keysToInsert {
 				currentTree.Insert(keyToInsert)
+			}
+			for _, keyToDelete := range testCase.keysToDelete {
+				currentTree.Delete(keyToDelete)
 			}
 			assert.Equal(t, testCase.expectedTree, currentTree)
 		})
