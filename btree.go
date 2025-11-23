@@ -177,7 +177,21 @@ func (t *Tree) deleteFromNode(node *Node, key int) {
 				childY.n += 1
 
 				t.deleteFromNode(childY, key)
+			} else if keyIndex < node.n && t.t <= node.children[keyIndex+1].n {
+				childX := node.children[keyIndex+1]
+
+				indexOfFirstKeyInChildX := 0
+				valueOfFirstKeyInChildX := childX.keys[indexOfFirstKeyInChildX]
+
+				t.deleteFromNode(childX, valueOfFirstKeyInChildX)
+
+				childY.keys[childY.n] = node.keys[keyIndex]
+				node.keys[keyIndex] = valueOfFirstKeyInChildX
+				childY.n += 1
+
+				t.deleteFromNode(childY, key)
 			}
+			// what in case when childY doesn't have right sibling and its left sibling doesn't have enogh keys? In this case merge
 		}
 	}
 }
