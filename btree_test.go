@@ -200,7 +200,7 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from second level child",
+			name:         "delete from second level child 1",
 			keysToInsert: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
 			keysToDelete: []int{13},
 			t:            3,
@@ -243,6 +243,75 @@ func TestSplitNode(t *testing.T) {
 									n:        4,
 									leaf:     true,
 									keys:     []int{10, 11, 12, 14, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{16, 17, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        3,
+									leaf:     true,
+									keys:     []int{19, 20, 21, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								nil, nil, nil,
+							},
+						},
+						nil, nil, nil, nil,
+					},
+				},
+			},
+		},
+		{
+			// key 12 have to children - {10, 11}, {13, 14}
+			// in this test case I want to delete 10 so that I force merging of left child into its right sibling testing that branch
+			// this test is tests implementation detail - its fine because I tests particular implementation of btree
+			name:         "delete from second level child 2",
+			keysToInsert: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
+			keysToDelete: []int{10},
+			t:            3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					keys: []int{9, 0, 0, 0, 0},
+					n:    1,
+					children: []*Node{
+						{
+							n:    2,
+							keys: []int{3, 6, 0, 0, 0},
+							children: []*Node{
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{1, 2, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{4, 5, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{7, 8, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								nil, nil, nil,
+							},
+						},
+						{
+							n:    2,
+							keys: []int{15, 18, 0, 0, 0},
+							children: []*Node{
+								{
+									n:        4,
+									leaf:     true,
+									keys:     []int{11, 12, 13, 14, 0},
 									children: []*Node{nil, nil, nil, nil, nil, nil},
 								},
 								{
