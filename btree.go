@@ -52,9 +52,9 @@ func (t *Tree) splitNode(parent *Node, childIndex int) {
 	}
 
 	// move pointers
-	for i := range newN {
-		newChild.children[i] = childX.children[middleKeyIndex+i]
-		childX.children[middleKeyIndex+i] = nil
+	for i := range newN + 1 {
+		newChild.children[i] = childX.children[middleKeyIndex+i+1]
+		childX.children[middleKeyIndex+i+1] = nil
 	}
 	childX.n = newN
 
@@ -215,7 +215,7 @@ func (t *Tree) deleteFromNode(node *Node, key int) {
 					}
 
 					// shift keys in node to the left by 1
-					for i := keyIndex + 1; i < node.n; i++ {
+					for i := keyIndex; i < node.n; i++ {
 						node.keys[i-1] = node.keys[i]
 					}
 					node.keys[node.n-1] = 0
@@ -271,6 +271,8 @@ func (t *Tree) deleteFromNode(node *Node, key int) {
 
 				}
 			}
+		} else {
+			t.deleteFromNode(childY, key)
 		}
 	}
 }
