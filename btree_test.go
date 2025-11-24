@@ -8,17 +8,18 @@ import (
 
 func TestSplitNode(t *testing.T) {
 	testCases := []struct {
-		name         string
-		keysToInsert []int
-		keysToDelete []int
-		t            int
-		expectedTree *Tree
+		name                   string
+		keysToInsertPreDelete  []int
+		keysToDelete           []int
+		keysToInsertPostDelete []int
+		t                      int
+		expectedTree           *Tree
 	}{
 		{
-			name:         "insert into full child at last place",
-			keysToInsert: []int{1, 2, 4, 13, 14, 5, 6, 12, 7, 8, 9, 10},
-			keysToDelete: []int{},
-			t:            3,
+			name:                  "insert into full child at last place",
+			keysToInsertPreDelete: []int{1, 2, 4, 13, 14, 5, 6, 12, 7, 8, 9, 10},
+			keysToDelete:          []int{},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -56,10 +57,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "insert into full root",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6},
-			keysToDelete: []int{},
-			t:            3,
+			name:                  "insert into full root",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6},
+			keysToDelete:          []int{},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -84,10 +85,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from full root",
-			keysToInsert: []int{1, 2, 3, 4, 5},
-			keysToDelete: []int{3},
-			t:            3,
+			name:                  "delete from full root",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5},
+			keysToDelete:          []int{3},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -99,10 +100,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from full root",
-			keysToInsert: []int{1, 2, 3, 4, 5},
-			keysToDelete: []int{3},
-			t:            3,
+			name:                  "delete from full root",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5},
+			keysToDelete:          []int{3},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -114,10 +115,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from leaf node with t - 1 keys and left sibling with eq or ge than t",
-			keysToInsert: []int{1, 2, 4, 5, 6, 3},
-			keysToDelete: []int{5},
-			t:            3,
+			name:                  "delete from leaf node with t - 1 keys and left sibling with eq or ge than t",
+			keysToInsertPreDelete: []int{1, 2, 4, 5, 6, 3},
+			keysToDelete:          []int{5},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -142,10 +143,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from leaf node with t - 1 keys and right sibling with eq or ge than t",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6},
-			keysToDelete: []int{2},
-			t:            3,
+			name:                  "delete from leaf node with t - 1 keys and right sibling with eq or ge than t",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6},
+			keysToDelete:          []int{2},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -170,10 +171,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from child with merging with left sibling and reducing tree height",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6},
-			keysToDelete: []int{2, 5},
-			t:            3,
+			name:                  "delete from child with merging with left sibling and reducing tree height",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6},
+			keysToDelete:          []int{2, 5},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -185,10 +186,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from child with merging with right sibling and reducing tree height",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6},
-			keysToDelete: []int{2, 3},
-			t:            3,
+			name:                  "delete from child with merging with right sibling and reducing tree height",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6},
+			keysToDelete:          []int{2, 3},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -200,10 +201,10 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			name:         "delete from second level child 1",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
-			keysToDelete: []int{13},
-			t:            3,
+			name:                  "delete from second level child 1",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
+			keysToDelete:          []int{13},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -269,10 +270,10 @@ func TestSplitNode(t *testing.T) {
 			// key 12 have to children - {10, 11}, {13, 14}
 			// in this test case I want to delete 10 so that I force merging of left child into its right sibling testing that branch
 			// this test is tests implementation detail - its fine because I tests particular implementation of btree
-			name:         "delete from second level child 2",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
-			keysToDelete: []int{10},
-			t:            3,
+			name:                  "delete from second level child 2",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
+			keysToDelete:          []int{10},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -336,10 +337,10 @@ func TestSplitNode(t *testing.T) {
 		},
 		{
 			// this varaint tests if child borrows key from sibling
-			name:         "delete from second level child 3",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
-			keysToDelete: []int{17},
-			t:            3,
+			name:                  "delete from second level child 3",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
+			keysToDelete:          []int{17},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -409,10 +410,10 @@ func TestSplitNode(t *testing.T) {
 		},
 		{
 			// this varaint tests if child borrows key from sibling
-			name:         "delete from second level child 4",
-			keysToInsert: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
-			keysToDelete: []int{20},
-			t:            3,
+			name:                  "delete from second level child 4",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
+			keysToDelete:          []int{20},
+			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
@@ -480,16 +481,35 @@ func TestSplitNode(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:                   "delete all keys and insert again",
+			keysToInsertPreDelete:  []int{1, 2, 3, 4, 5},
+			keysToDelete:           []int{1, 2, 3, 4, 5},
+			keysToInsertPostDelete: []int{1},
+			t:                      3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					keys:     []int{1, 0, 0, 0, 0},
+					n:        1,
+					leaf:     true,
+					children: []*Node{nil, nil, nil, nil, nil, nil},
+				},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			currentTree := NewTree(testCase.t)
-			for _, keyToInsert := range testCase.keysToInsert {
+			for _, keyToInsert := range testCase.keysToInsertPreDelete {
 				currentTree.Insert(keyToInsert)
 			}
 			for _, keyToDelete := range testCase.keysToDelete {
 				currentTree.Delete(keyToDelete)
+			}
+			for _, keyToInsert := range testCase.keysToInsertPostDelete {
+				currentTree.Insert(keyToInsert)
 			}
 			assert.Equal(t, testCase.expectedTree, currentTree)
 		})

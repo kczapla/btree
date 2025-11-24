@@ -146,6 +146,12 @@ func (t *Tree) Delete(key int) {
 	// there is an edge case when last key is delted from root as this is the only node that can have size 1
 	// this addresses that case
 	t.root = t.root.children[0]
+
+	// handle case when all nodes are deleted from tree
+	// leave Tree in proper state
+	if t.root == nil {
+		t.root = newNode(t.t, true)
+	}
 }
 
 func (t *Tree) deleteFromNode(node *Node, key int) {
