@@ -497,6 +497,73 @@ func TestSplitNode(t *testing.T) {
 				},
 			},
 		},
+		{
+			// this varaint tests if child borrows key from sibling
+			name:                  "delete from inter node",
+			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
+			keysToDelete:          []int{15},
+			t:                     3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					keys: []int{9, 0, 0, 0, 0},
+					n:    1,
+					children: []*Node{
+						{
+							n:    2,
+							keys: []int{3, 6, 0, 0, 0},
+							children: []*Node{
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{1, 2, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{4, 5, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{7, 8, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								nil, nil, nil,
+							},
+						},
+						{
+							n:    2,
+							keys: []int{12, 18, 0, 0, 0},
+							children: []*Node{
+								{
+									n:        2,
+									leaf:     true,
+									keys:     []int{10, 11, 0, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        4,
+									leaf:     true,
+									keys:     []int{13, 14, 16, 17, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								{
+									n:        3,
+									leaf:     true,
+									keys:     []int{19, 20, 21, 0, 0},
+									children: []*Node{nil, nil, nil, nil, nil, nil},
+								},
+								nil, nil, nil,
+							},
+						},
+						nil, nil, nil, nil,
+					},
+				},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {

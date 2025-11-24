@@ -169,7 +169,54 @@ func (t *Tree) deleteFromNode(node *Node, key int) {
 
 		node.n -= 1
 	} else {
-		keyIndex := findKeyInNode(node, key)
+		ok, keyIndex := findKeyInNode2(node, key)
+		if ok {
+			childX := node.children[keyIndex]
+			childY := node.children[keyIndex+1]
+			if t.t <= childX.n {
+				lastKeyIndexInChildX := childX.n - 1
+				kPrim := childX.keys[lastKeyIndexInChildX]
+				t.deleteFromNode(childX, kPrim)
+				node.keys[keyIndex] = kPrim
+			} else if t.t <= childY.n {
+				kPrim := childY.keys[0]
+				t.deleteFromNode(childY, kPrim)
+				node.keys[keyIndex] = kPrim
+			} else {
+				// move key into childX
+				childX.keys[childX.n] = node.keys[keyIndex]
+
+				// move childY keys to childX
+				for i := 0; i < childY.n; i++ {
+					childX.keys[childX.n+i+1] = childY.keys[i]
+				}
+
+				// move childY children to childX
+				for i := 0; i < childY.n+1; i++ {
+					childX.children[childX.n+i+1] = childY.children[i]
+				}
+
+				// keys from parent and sibling
+				childX.n += childY.n + 1
+
+				// shift left keys in parent node
+				for i := keyIndex + 1; i < node.n; i++ {
+					node.keys[i-1] = node.keys[i]
+				}
+				node.keys[node.n-1] = 0
+
+				// shift left children in parent node
+				for i := keyIndex + 2; i < node.n+1; i++ {
+					node.children[i-1] = node.children[i]
+				}
+				node.children[node.n] = nil
+				node.n -= 1
+
+				t.deleteFromNode(childX, key)
+			}
+
+			return
+		}
 		childY := node.children[keyIndex]
 		if childY.n < t.t {
 			if 0 < keyIndex && t.t <= node.children[keyIndex-1].n {
