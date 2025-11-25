@@ -565,68 +565,189 @@ func TestSplitNode(t *testing.T) {
 			},
 		},
 		{
-			// this varaint tests if child borrows key from sibling
-			name:                  "delete from root which is not leaf",
-			keysToInsertPreDelete: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21},
-			keysToDelete:          []int{9},
+			name:                  "delete from single key root and its right child with t or more elems",
+			keysToInsertPreDelete: []int{1, 10, 20, 30, 40, 35},
+			keysToDelete:          []int{20},
 			t:                     3,
 			expectedTree: &Tree{
 				t: 3,
 				root: &Node{
-					keys: []int{12, 0, 0, 0, 0},
+					keys: []int{30, 0, 0, 0, 0},
 					n:    1,
 					children: []*Node{
 						{
-							n:    2,
-							keys: []int{3, 6, 0, 0, 0},
-							children: []*Node{
-								{
-									n:        2,
-									leaf:     true,
-									keys:     []int{1, 2, 0, 0, 0},
-									children: []*Node{nil, nil, nil, nil, nil, nil},
-								},
-								{
-									n:        2,
-									leaf:     true,
-									keys:     []int{4, 5, 0, 0, 0},
-									children: []*Node{nil, nil, nil, nil, nil, nil},
-								},
-								{
-									n:        2,
-									leaf:     true,
-									keys:     []int{7, 8, 0, 0, 0},
-									children: []*Node{nil, nil, nil, nil, nil, nil},
-								},
-								nil, nil, nil,
-							},
+							n:        2,
+							leaf:     true,
+							keys:     []int{1, 10, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
 						},
 						{
-							n:    2,
-							keys: []int{15, 18, 0, 0, 0},
-							children: []*Node{
-								{
-									n:        4,
-									leaf:     true,
-									keys:     []int{10, 11, 13, 14, 0},
-									children: []*Node{nil, nil, nil, nil, nil, nil},
-								},
-								{
-									n:        2,
-									leaf:     true,
-									keys:     []int{16, 17, 0, 0, 0},
-									children: []*Node{nil, nil, nil, nil, nil, nil},
-								},
-								{
-									n:        3,
-									leaf:     true,
-									keys:     []int{19, 20, 21, 0, 0},
-									children: []*Node{nil, nil, nil, nil, nil, nil},
-								},
-								nil, nil, nil,
-							},
+							n:        2,
+							leaf:     true,
+							keys:     []int{35, 40, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
 						},
 						nil, nil, nil, nil,
+					},
+				},
+			},
+		},
+		{
+			name:                  "delete from single key root and its left child with t or more elems",
+			keysToInsertPreDelete: []int{1, 10, 20, 30, 40, 5},
+			keysToDelete:          []int{20},
+			t:                     3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					keys: []int{10, 0, 0, 0, 0},
+					n:    1,
+					children: []*Node{
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{1, 5, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{30, 40, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						nil, nil, nil, nil,
+					},
+				},
+			},
+		},
+		{
+			name:                  "delete from single key root and its both children with less than t keys",
+			keysToInsertPreDelete: []int{1, 10, 20, 30, 40, 5},
+			keysToDelete:          []int{5, 20},
+			t:                     3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					n:        4,
+					leaf:     true,
+					keys:     []int{1, 10, 30, 40, 0},
+					children: []*Node{nil, nil, nil, nil, nil, nil},
+				},
+			},
+		},
+		{
+			name:                  "delete mid key from inter node and its right child with less than t keys",
+			keysToInsertPreDelete: []int{1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 401},
+			keysToDelete:          []int{500},
+			t:                     3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					n:    3,
+					leaf: false,
+					keys: []int{200, 401, 800, 0, 0},
+					children: []*Node{
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{1, 100, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{300, 400, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{600, 700, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        3,
+							leaf:     true,
+							keys:     []int{900, 1000, 1100, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						nil, nil,
+					},
+				},
+			},
+		},
+		{
+			name:                  "delete mid key from inter node and its left child with less than t keys",
+			keysToInsertPreDelete: []int{1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 501},
+			keysToDelete:          []int{500},
+			t:                     3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					n:    3,
+					leaf: false,
+					keys: []int{200, 501, 800, 0, 0},
+					children: []*Node{
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{1, 100, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{300, 400, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{600, 700, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        3,
+							leaf:     true,
+							keys:     []int{900, 1000, 1100, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						nil, nil,
+					},
+				},
+			},
+		},
+		{
+			name:                  "delete mid key from inter node and its both children with less than t keys",
+			keysToInsertPreDelete: []int{1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100},
+			keysToDelete:          []int{500},
+			t:                     3,
+			expectedTree: &Tree{
+				t: 3,
+				root: &Node{
+					n:    2,
+					leaf: false,
+					keys: []int{200, 800, 0, 0, 0},
+					children: []*Node{
+						{
+							n:        2,
+							leaf:     true,
+							keys:     []int{1, 100, 0, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        4,
+							leaf:     true,
+							keys:     []int{300, 400, 600, 700, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						{
+							n:        3,
+							leaf:     true,
+							keys:     []int{900, 1000, 1100, 0, 0},
+							children: []*Node{nil, nil, nil, nil, nil, nil},
+						},
+						nil, nil, nil,
 					},
 				},
 			},
